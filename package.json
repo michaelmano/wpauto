@@ -4,8 +4,7 @@
   "description": "Wordpress installer that sets up the database, wp-config and imports themes",
   "main": "index.js",
   "scripts": {
-    "postinstall": "node .",
-    "test": "node ."
+    "test": ""
   },
   "keywords": [
     "Wordpress",
