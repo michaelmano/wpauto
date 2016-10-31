@@ -17,10 +17,10 @@
     "email": "michael.mano26@gmail.com",
     "url": "http://www.michaelmano.com"
   },
-  "homepage": "https://github.org/michaelmano/wpauto",
+  "homepage": "https://github.com/michaelmano/wpauto",
   "repository": {
     "type": "git",
-    "url": "git+https://github.org/michaelmano/wpauto.git"
+    "url": "git+https://github.com/michaelmano/wpauto.git"
   },
   "contributors": [],
   "dependencies": {
