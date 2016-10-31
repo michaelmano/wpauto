@@ -1,4 +1,4 @@
-# WPAUTO
+# wpauto
 
 [![NPM Version][npm-image]][npm-url]
 [![NPM Downloads][downloads-image]][downloads-url]
@@ -16,7 +16,7 @@
 
 ## Introduction
 
-What does WPAUTO do?
+What does wpauto do?
 - Downloads and extracts Wordpress into a directory of your choosing.
 - If you have a custom Wordpress theme it will also download and extract this into the themes directory.
 - Creates a MySQL database.
