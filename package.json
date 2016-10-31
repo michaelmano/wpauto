@@ -55,17 +55,9 @@
   },
   "files": [
     "lib/",
-    "lib/Database.js",
-    "lib/DatabaseConfig.js",
-    "lib/Download.js",
-    "lib/DownloadConfig.js",
-    "lib/Environment.js",
-    "lib/Promp.js",
-    "lib/logo.txt",
-    "lib/old-salt",
-    "README.md",
-    "index.js"
+    "index.js",
+    "License",
+    "README.md"
   ],
-  "_resolved": "https://registry.npmjs.org/wpauto/-/wpauto-1.0.0.tgz",
-  "readme": "README.md"
+  "_resolved": "https://registry.npmjs.org/wpauto/-/wpauto-1.0.0.tgz"
 }
