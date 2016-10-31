@@ -1,10 +1,10 @@
 {
   "name": "wpauto",
-  "version": "0.0.46",
+  "version": "0.0.44",
   "description": "Wordpress installer that sets up the database, wp-config and imports themes",
   "main": "index.js",
   "scripts": {
-    "install": "npm install && node index.js",
+    "install": "npm install adm-zip && npm install mysql && node index.js",
     "test": ""
   },
   "keywords": [
@@ -24,10 +24,7 @@
     "url": "git+https://github.com/michaelmano/wpauto.git"
   },
   "contributors": [],
-  "dependencies": {
-    "adm-zip": "^0.4.7",
-    "mysql": "^2.11.1"
-  },
+  "Devdependencies": {},
   "license": "ISC",
   "_id": "wpauto@1.0.0",
   "_shasum": "47b5b9a6f2accaafe23de9f70e9476968fe2d369",
