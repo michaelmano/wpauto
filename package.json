@@ -1,6 +1,6 @@
 {
   "name": "wpauto",
-  "version": "0.0.44",
+  "version": "0.0.45",
   "description": "Wordpress installer that sets up the database, wp-config and imports themes",
   "main": "index.js",
   "scripts": {
