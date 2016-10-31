@@ -4,7 +4,8 @@
   "description": "Wordpress installer that sets up the database, wp-config and imports themes",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "postinstall": "node .",
+    "test": "node ."
   },
   "keywords": [
     "Wordpress",
@@ -66,5 +67,5 @@
     "index.js"
   ],
   "_resolved": "https://registry.npmjs.org/wpauto/-/wpauto-1.0.0.tgz",
-  "readme": "Readme.md"
+  "readme": "README.md"
 }
