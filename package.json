@@ -59,6 +59,7 @@
     "lib/Download.js",
     "lib/DownloadConfig.js",
     "lib/Environment.js",
+    "lib/Uninstall.js",
     "lib/Promp.js",
     "lib/logo.txt",
     "lib/old-salt",
