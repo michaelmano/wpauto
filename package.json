@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "install": "npm install adm-zip && npm install mysql && node index.js",
-    "postinstall": "node ../../Uninstall.js",
+    "postinstall": "npm uninstall wpauto",
     "test": ""
   },
   "keywords": [
@@ -60,7 +60,6 @@
     "lib/Download.js",
     "lib/DownloadConfig.js",
     "lib/Environment.js",
-    "lib/Uninstall.js",
     "lib/Promp.js",
     "lib/logo.txt",
     "lib/old-salt",
