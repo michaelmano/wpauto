@@ -1,0 +1,70 @@
+{
+  "name": "wpauto",
+  "version": "1.0.0",
+  "description": "Wordpress installer that sets up the database, wp-config and imports themes",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Wordpress",
+    "installer",
+    "wp-config",
+    "MySQL"
+  ],
+  "author": {
+    "name": "Michael Mano",
+    "email": "michael.mano26@gmail.com",
+    "url": "http://www.michaelmano.com"
+  },
+  "homepage": "https://github.org/michaelmano/wpauto",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.org/michaelmano/wpauto.git"
+  },
+  "contributors": [
+    {
+      "name": "Anthony Hubble",
+      "email": "ahubble00000@gmail.com"
+    }
+  ],
+  "dependencies": {
+    "adm-zip": "^0.4.7",
+    "mysql": "^2.11.1"
+  },
+  "license": "ISC",
+  "_id": "wpauto@1.0.0",
+  "_shasum": "47b5b9a6f2accaafe23de9f70e9476968fe2d369",
+  "_from": "wpauto@latest",
+  "_npmVersion": "2.15.9",
+  "_nodeVersion": "4.6.0",
+  "_npmUser": {
+    "name": "michael-mano",
+    "email": "michael.mano26@gmail.com"
+  },
+  "dist": {
+    "shasum": "47b5b9a6f2accaafe23de9f70e9476968fe2d369",
+    "tarball": "https://registry.npmjs.org/wpauto/-/wpauto-1.0.0.tgz"
+  },
+  "maintainers": [
+    {
+      "name": "michael-mano",
+      "email": "michael.mano26@gmail.com"
+    }
+  ],
+  "_npmOperationalInternal": {
+    "host": "packages-16-east.internal.npmjs.com",
+    "tmp": "tmp/wpauto-1.0.0.tgz_1475962001346_0.10445438395254314"
+  },
+  "directories": {
+    "lib": []
+  },
+  "files": [
+    "Changes.md",
+    "License",
+    "Readme.md",
+    "index.js"
+  ],
+  "_resolved": "https://registry.npmjs.org/wpauto/-/wpauto-1.0.0.tgz",
+  "readme": "Readme.md"
+}
