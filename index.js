@@ -4,7 +4,10 @@ var env     = {
   downloaded:  0
 };
 
-module.exports = dbCheck, env;
+module.exports = {
+  dbCheck: dbCheck,
+  env    : env
+}
 
 Initiate();
 
