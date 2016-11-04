@@ -21,7 +21,9 @@ What does wpauto do?
 - If you have a custom Wordpress theme it will also download and extract this into the themes directory.
 - Creates a MySQL database.
 - Creates new Wordpress Salts and enters them into wp-config-sample.php along with the database information and renames it to wp-config.php
-~~Removes itself after it has finished installing wordpress. ~~ at the moment this is having issues. Just remove node_modules folder after install has finished.
+- Removes itself after it has finished installing wordpress. 
+
+~~ at the moment Removes itself is having issues. Just remove node_modules folder after install has finished.
 
 **See Todo for future plans**
 
