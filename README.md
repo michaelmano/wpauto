@@ -23,7 +23,7 @@ What does wpauto do?
 - Creates new Wordpress Salts and enters them into wp-config-sample.php along with the database information and renames it to wp-config.php
 - Removes itself after it has finished installing wordpress. 
 
-~~ at the moment Removes itself is having issues. Just remove node_modules folder after install has finished.
+**at the moment Removes itself is having issues. Just remove node_modules folder after install has finished.**
 
 **See Todo for future plans**
 
