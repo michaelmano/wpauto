@@ -1,8 +1,0 @@
-{
-    "presets" : ["es2016", "stage-3"],
-    "env": {
-      "test": {
-        "presets": ["es2015"]
-      }
-    }
-}
