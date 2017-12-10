@@ -1,6 +1,5 @@
-require('babel-register');
-import init from '../lib';
-import {expect} from 'chai';
+const init = require('../lib');
+const {expect} = require('chai');
 
 describe('"init"', () => {
     it('should export a function', () => {
