@@ -1,6 +1,6 @@
-const {
+import {
     spawn,
-} = require('child_process');
+} from 'child_process';
 
 /**
  * Runs a command with the passed arguments or --version
@@ -22,4 +22,4 @@ const run = function run(cmd, args = ['--version']) {
     });
 };
 
-module.exports = run;
+export default run;

@@ -1,4 +1,4 @@
-const fs = require('fs');
+import fs from 'fs';
 
 /**
  * Adds a tabbable Autocomplete for the user to find a directory.
@@ -23,6 +23,6 @@ const directoryTree = function directoryTree(line) {
         : [hits.length ? hits : completions, line];
 };
 
-module.exports = {
+export {
     directoryTree,
 };

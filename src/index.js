@@ -1,13 +1,11 @@
-#! /usr/bin/env node
-const fs = require('fs');
-const download = require('./download');
-const ask = require('./ask');
-const config = JSON.parse(JSON.stringify(require('../config.json')));
-const run = require('./run');
-const checkEnvironment = require('./check-environment');
-const {
+import fs from 'fs';
+import download from './download';
+import ask from './ask';
+import run from './run';
+import checkEnvironment from './check-environment';
+import {
     directoryTree,
-} = require('./completer');
+} from './completer';
 
 let directory = process.argv.slice(2)[0];
 let themeInstalled = false;
@@ -54,7 +52,13 @@ const init = async function init() {
 
 const _cloneProject = async function _cloneProject() {
     console.log('Cloning the project.');
-    return run('git', ['clone', '-b', config.branch, config.repo, directory]);
+    return run('git', [
+        'clone',
+        '-b',
+        'develop',
+        'git@github.com:michaelmano/wordpress.git',
+        directory,
+    ]);
 };
 
 const _composerInstall = async function _composerInstall() {

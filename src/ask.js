@@ -1,4 +1,4 @@
-const rl = require('readline');
+import rl from 'readline';
 
 /**
  * Prompts the user for input and returns the input as a Promise.
@@ -23,4 +23,4 @@ const ask = function ask(question, completer = null, defaultAnswer = null) {
     });
 };
 
-module.exports = ask;
+export default ask;

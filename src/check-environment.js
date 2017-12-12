@@ -1,4 +1,4 @@
-const run = require('./run');
+import run from './run';
 
 /**
  * Checks the environment to make sure all commands are available.
@@ -24,4 +24,4 @@ const checkEnvironment = async function checkEnvironment(commands) {
     });
 };
 
-module.exports = checkEnvironment;
+export default checkEnvironment;
