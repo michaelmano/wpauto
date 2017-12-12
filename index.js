@@ -10,29 +10,46 @@ const {
 } = require('./lib/completer');
 
 let directory = process.argv.slice(2)[0];
+let themeInstalled = false;
+let domain = null;
 
 const init = async function init() {
-    await checkEnvironment(['git', 'composer', 'php', 'npm', 'mysql']);
+    await checkEnvironment(['git', 'composer', 'php', 'npm']);
     if (!directory) {
         directory = await ask('Please enter project path: ', directoryTree);
     }
-
-    // Clone the project.
     await _cloneProject();
-    // Download the new wordpress salts and put them into public/wp-config.php/
+    process.chdir(directory);
+    await ask(
+        'Would you like to install the starter theme?',
+        null,
+        'true',
+    ).then(async (answer) => {
+        if (answer == 'true') {
+            themeInstalled = !themeInstalled;
+        } else {
+            await _removeThemeFromComposer();
+        }
+    });
     _createSalts();
-    // Wait for both composer and the env to be set up before moving on.
     Promise.all([
-        // Install all required vendors.
         _composerInstall(),
-        // Prompt the user for details regarding environment.
         _askForEnvDetails(),
     ]).then((data) => {
-        // Create the database and .env file.
         _setupEnv(data[1]);
     });
-    // Install all node packages.
     await _npmInstall();
+    if (themeInstalled) {
+        await _removeThemeFromComposer();
+    }
+    await _setupValet().then(() => {
+        _removeGit();
+        console.log(
+            'CD into the project',
+            `'cd ${directory}'`,
+            `and run 'npm run watch' to begin.`,
+        );
+    });
 };
 
 const _cloneProject = async function _cloneProject() {
@@ -41,8 +58,6 @@ const _cloneProject = async function _cloneProject() {
 };
 
 const _composerInstall = async function _composerInstall() {
-    console.log('Installing vendors.');
-    process.chdir(directory);
     return await run('composer', ['install']);
 };
 
@@ -51,7 +66,6 @@ const _npmInstall = async function _npmInstall() {
 };
 
 const _createSalts = async function _createSalts() {
-    console.log('Setting up wp-config.php');
     const wpConfig = 'public/wp-config.php';
     const salts = await download('https://api.wordpress.org/secret-key/1.1/salt/');
 
@@ -70,7 +84,7 @@ const _createSalts = async function _createSalts() {
 };
 
 const _askForEnvDetails = async function _askForEnvDetails() {
-    const ENV = {
+    env = {
         WP_HOME: await ask('Please enter the site URL: ',
             null, `http://${directory}.dev`
         ),
@@ -106,7 +120,7 @@ const _askForEnvDetails = async function _askForEnvDetails() {
         ),
     };
 
-    return ENV;
+    return env;
 };
 
 const _setupEnv = function _setupEnv(env) {
@@ -146,6 +160,70 @@ const _setupEnv = function _setupEnv(env) {
         'style.scss',
         `/*!\r\n * Theme Name: ${env.WP_DEFAULT_THEME}\r\n*/\r\n`,
         (error) => console.error
+    );
+    domain = _getHostName(env.WP_HOME);
+};
+
+const _removeThemeFromComposer = function _removeThemeFromComposer() {
+    return new Promise((resolve, reject) => {
+        fs.readFile('composer.json', 'utf8', (error, data) => {
+            if (error) {
+            return console.error(error);
+            }
+            data = JSON.parse(data);
+            delete data.repositories[1];
+            delete data.require['michaelmano/starter-theme'];
+            fs.writeFile(
+                'composer.json',
+                JSON.stringify(data, null, 2),
+                (error) => reject(error),
+            );
+            resolve();
+        });
+    });
+};
+
+const _setupValet = async function _setupValet() {
+    const config = process.env.HOME + '/.valet/config.json';
+    if (fs.existsSync(config)) {
+        fs.readFile(config, 'utf8', (error, data) => {
+            if (error) {
+              return console.error(error);
+            }
+            const siteExists = JSON.parse(data).paths.every((path) => {
+                return directory.indexOf(path) > -1;
+            });
+
+            if (!siteExists) {
+                _addSiteToValet();
+            }
+        });
+    }
+};
+
+const _addSiteToValet = async function _addSiteToValet() {
+    process.chdir('public');
+    console.log('Linking project with Laravel Valet.');
+    return await run('valet', ['link', domain]);
+};
+
+const _getHostName = function _getHostName(url) {
+    const match = url.match(/:\/\/(www[0-9]?\.)?(.[^/:]+)/i);
+    if (match != null &&
+        match.length > 2 &&
+        typeof match[2] === 'string'&&
+        match[2].length > 0
+    ) {
+        return match[2].slice(0, match[2].lastIndexOf('.'));
+    } else {
+        return null;
+    }
+};
+
+const _removeGit = async function _removeGit() {
+    return (
+        await run('rm', ['-rf', '.git']),
+        await run('git', ['init', '../'])
     );
 };
 
