@@ -5,7 +5,6 @@
   "bin": "lib/index.js",
   "scripts": {
     "test": "mocha test/**.test.js",
-    "postinstall": "npm install",
     "compile": "babel --presets es2015,stage-0 -d lib/ src/",
     "start": "node lib/index.js"
   },
