@@ -1,12 +1,10 @@
 {
   "name": "wpauto",
-  "version": "0.0.59",
-  "description": "Wordpress installer that sets up the database, wp-config and imports themes",
-  "main": "index.js",
+  "version": "0.0.6",
+  "description": "",
+  "bin": "index.js",
   "scripts": {
-    "install": "npm install adm-zip && npm install mysql && node index.js",
-    "postinstall": "npm uninstall wpauto",
-    "test": ""
+    "test": "mocha test/**.test.js"
   },
   "keywords": [
     "Wordpress",
@@ -25,15 +23,14 @@
     "url": "git+https://github.com/michaelmano/wpauto.git"
   },
   "contributors": [],
-  "Devdependencies": {},
-  "license": "ISC",
+  "license": "MIT",
   "_id": "wpauto@1.0.0",
   "_shasum": "47b5b9a6f2accaafe23de9f70e9476968fe2d369",
   "_from": "wpauto@latest",
   "_npmVersion": "2.15.9",
   "_nodeVersion": "4.6.0",
   "_npmUser": {
-    "name": "michael-mano",
+    "name": "michaelmano",
     "email": "michael.mano26@gmail.com"
   },
   "dist": {
@@ -42,7 +39,7 @@
   },
   "maintainers": [
     {
-      "name": "michael-mano",
+      "name": "michaelmano",
       "email": "michael.mano26@gmail.com"
     }
   ],
@@ -50,14 +47,20 @@
     "host": "packages-16-east.internal.npmjs.com",
     "tmp": "tmp/wpauto-1.0.0.tgz_1475962001346_0.10445438395254314"
   },
-  "directories": {
-    "lib": []
-  },
   "files": [
     "lib/",
     "index.js",
-    "License",
+    "LICENCE.md",
     "README.md"
   ],
-  "_resolved": "https://registry.npmjs.org/wpauto/-/wpauto-1.0.0.tgz"
+  "_resolved": "https://registry.npmjs.org/wpauto/-/wpauto-1.0.0.tgz",
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "eslint": "^4.12.1",
+    "eslint-config-google": "^0.9.1",
+    "mocha": "^4.0.1"
+  },
+  "dependencies": {
+    "command-exists": "^1.2.2"
+  }
 }
