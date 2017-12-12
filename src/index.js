@@ -1,13 +1,13 @@
 #! /usr/bin/env node
 const fs = require('fs');
-const download = require('./lib/download');
-const ask = require('./lib/ask');
-const config = JSON.parse(JSON.stringify(require('./config.json')));
-const run = require('./lib/run');
-const checkEnvironment = require('./lib/check-environment');
+const download = require('./download');
+const ask = require('./ask');
+const config = JSON.parse(JSON.stringify(require('../config.json')));
+const run = require('./run');
+const checkEnvironment = require('./check-environment');
 const {
     directoryTree,
-} = require('./lib/completer');
+} = require('./completer');
 
 let directory = process.argv.slice(2)[0];
 let themeInstalled = false;
