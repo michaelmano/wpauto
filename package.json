@@ -50,8 +50,8 @@
     "tmp": "tmp/wpauto-1.0.0.tgz_1475962001346_0.10445438395254314"
   },
   "files": [
-    "lib/",
     "index.js",
+    "wpauto.js",
     "LICENCE.md",
     "README.md"
   ],
