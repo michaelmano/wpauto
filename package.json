@@ -73,6 +73,7 @@
     "rollup-plugin-babel": "^3.0.2"
   },
   "dependencies": {
-    "babel-polyfill": "^6.26.0"
+    "babel-polyfill": "^6.26.0",
+    "util.promisify": "^1.0.0"
   }
 }

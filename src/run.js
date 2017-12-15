@@ -11,7 +11,7 @@ import {
 const run = function run(cmd, args = ['--version']) {
     return new Promise((resolve, reject) => {
         const command = spawn(cmd, args, {cwd: process.cwd()});
-        command.on('close', function(status) {
+        command.on('close', (status) => {
             if (status == 0) {
                 resolve();
             }
