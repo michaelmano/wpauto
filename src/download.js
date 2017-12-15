@@ -1,4 +1,4 @@
-const https = require('https');
+import https from 'https';
 
 /**
  * Downloads the requested url and returns it as a string.
@@ -17,4 +17,4 @@ const download = function download(url) {
     });
 };
 
-module.exports = download;
+export default download;
