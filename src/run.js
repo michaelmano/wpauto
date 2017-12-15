@@ -1,6 +1,6 @@
-const {
+import {
     spawn,
-} = require('child_process');
+} from 'child_process';
 
 /**
  * Runs a command with the passed arguments or --version
@@ -11,7 +11,7 @@ const {
 const run = function run(cmd, args = ['--version']) {
     return new Promise((resolve, reject) => {
         const command = spawn(cmd, args, {cwd: process.cwd()});
-        command.on('close', function(status) {
+        command.on('close', (status) => {
             if (status == 0) {
                 resolve();
             }
@@ -22,4 +22,4 @@ const run = function run(cmd, args = ['--version']) {
     });
 };
 
-module.exports = run;
+export default run;

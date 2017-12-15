@@ -20,6 +20,7 @@ At the moment this only works on linux and MAC and has not been developed for wi
 
 WPAuto requires that you have the following installed:
 
+* Node v8 and above.
 * Git
 * Composer
 * PHP
