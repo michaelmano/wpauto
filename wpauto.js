@@ -151,94 +151,95 @@ var init = function () {
 
                     case 4:
                         config = _context.sent;
-
-                        console.log('\r\n\r\n', '* Now installing required node packages', 'and composer vendors.');
-                        _context.next = 8;
+                        _context.next = 7;
                         return valetExists(config.directory);
 
-                    case 8:
+                    case 7:
                         valet = _context.sent;
-                        _context.next = 11;
+                        _context.next = 10;
                         return cloneProject(config.directory);
 
-                    case 11:
-                        _context.prev = 11;
-                        _context.next = 14;
+                    case 10:
+                        _context.prev = 10;
+                        _context.next = 13;
                         return process.chdir(config.directory);
 
-                    case 14:
-                        _context.next = 19;
+                    case 13:
+                        _context.next = 18;
                         break;
 
-                    case 16:
-                        _context.prev = 16;
-                        _context.t0 = _context['catch'](11);
+                    case 15:
+                        _context.prev = 15;
+                        _context.t0 = _context['catch'](10);
                         throw _context.t0;
 
-                    case 19:
+                    case 18:
                         if (!(config.theme !== 'yes')) {
-                            _context.next = 22;
+                            _context.next = 21;
                             break;
                         }
 
-                        _context.next = 22;
+                        _context.next = 21;
                         return removeThemeFromComposer();
 
-                    case 22:
-                        createSalts();
+                    case 21:
+                        _context.next = 23;
+                        return setupWpConfig();
+
+                    case 23:
                         _context.next = 25;
-                        return run('npm', ['install']);
+                        return installPackages();
 
                     case 25:
-                        _context.next = 27;
-                        return run('composer', ['install']);
-
-                    case 27:
                         setupEnv(config.env);
 
                         if (!config.theme) {
-                            _context.next = 31;
+                            _context.next = 29;
                             break;
                         }
 
-                        _context.next = 31;
+                        _context.next = 29;
                         return removeThemeFromComposer();
+
+                    case 29:
+                        _context.next = 31;
+                        return run('rm', ['-rf', '.git', 'composer.lock', 'package-lock.json']);
 
                     case 31:
                         _context.next = 33;
-                        return run('rm', ['-rf', '.git']);
+                        return run('git', ['init', '.']);
 
                     case 33:
                         _context.next = 35;
-                        return run('git', ['init', '../']);
+                        return run('git', ['add', '.']);
 
                     case 35:
+                        _context.next = 37;
+                        return run('git', ['commit', '-m "Initial Commit."']);
+
+                    case 37:
                         if (!(valet !== null || valet !== true)) {
                             _context.next = 49;
                             break;
                         }
 
-                        console.log('Now running valet link and secure.');
-                        _context.prev = 37;
-                        _context.next = 40;
+                        console.log('Now running valet link.');
+                        _context.prev = 39;
+                        _context.next = 42;
                         return process.chdir('public');
 
-                    case 40:
-                        _context.next = 45;
+                    case 42:
+                        _context.next = 47;
                         break;
 
-                    case 42:
-                        _context.prev = 42;
-                        _context.t1 = _context['catch'](37);
+                    case 44:
+                        _context.prev = 44;
+                        _context.t1 = _context['catch'](39);
                         throw _context.t1;
-
-                    case 45:
-                        _context.next = 47;
-                        return run('valet', ['link', config.directory]);
 
                     case 47:
                         _context.next = 49;
-                        return run('valet', ['secure']);
+                        return run('valet', ['link', config.env.WP_HOME.replace(/(^\w+:|^)\/\//, '').replace(/[^.]+$/g, '').slice(0, -1)]);
 
                     case 49:
                         console.log('CD into the project', '\'cd ' + config.directory + '\'', 'and run \'npm run watch\' to begin.');
@@ -249,7 +250,7 @@ var init = function () {
                         return _context.stop();
                 }
             }
-        }, _callee, this, [[11, 16], [37, 42]]);
+        }, _callee, this, [[10, 15], [39, 44]]);
     }));
 
     function init() {
@@ -277,7 +278,7 @@ var setup = function () {
                             break;
                         }
 
-                        _context2.t0 = process.argv.slice(2)[0];
+                        _context2.t0 = process.argv.slice(2)[0].match(/([^\/]*)\/*$/)[1];
                         _context2.next = 7;
                         break;
 
@@ -304,7 +305,7 @@ var setup = function () {
                         _context2.next = 13;
                         return ask({
                             question: 'Please enter the site URL: ',
-                            default: 'https://' + directory + '.dev'
+                            default: 'http://' + directory + '.test'
                         });
 
                     case 13:
@@ -428,191 +429,272 @@ var cloneProject = function cloneProject(directory) {
     return run('git', ['clone', '-b', 'develop', 'git@github.com:michaelmano/wordpress.git', directory]);
 };
 
-var createSalts = function () {
-    var _ref3 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
-        var wpConfig, salts, newConfig;
-        return regeneratorRuntime.wrap(function _callee3$(_context3) {
+var downloadSalts = function downloadSalts() {
+    var _this = this;
+
+    return new Promise(function () {
+        var _ref3 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(resolve, reject) {
+            return regeneratorRuntime.wrap(function _callee3$(_context3) {
+                while (1) {
+                    switch (_context3.prev = _context3.next) {
+                        case 0:
+                            _context3.prev = 0;
+                            _context3.next = 3;
+                            return download('https://api.wordpress.org/secret-key/1.1/salt/').then(function (data) {
+                                return resolve(data.toString().split('\n'));
+                            });
+
+                        case 3:
+                            _context3.next = 9;
+                            break;
+
+                        case 5:
+                            _context3.prev = 5;
+                            _context3.t0 = _context3['catch'](0);
+
+                            reject(_context3.t0);
+                            throw _context3.t0;
+
+                        case 9:
+                        case 'end':
+                            return _context3.stop();
+                    }
+                }
+            }, _callee3, _this, [[0, 5]]);
+        }));
+
+        return function (_x, _x2) {
+            return _ref3.apply(this, arguments);
+        };
+    }());
+};
+
+var setupWpConfig = function () {
+    var _ref4 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6() {
+        var _this2 = this;
+
+        return regeneratorRuntime.wrap(function _callee6$(_context6) {
             while (1) {
-                switch (_context3.prev = _context3.next) {
+                switch (_context6.prev = _context6.next) {
                     case 0:
-                        wpConfig = 'public/wp-config.php';
-                        salts = null;
-                        newConfig = null;
-                        _context3.prev = 3;
-                        _context3.next = 6;
-                        return download('https://api.wordpress.org/secret-key/1.1/salt/').then(function (data) {
-                            return data.toString().split('\n');
-                        }).catch(function (error) {
-                            throw error;
-                        });
+                        return _context6.abrupt('return', new Promise(function () {
+                            var _ref5 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5(resolve, reject) {
+                                return regeneratorRuntime.wrap(function _callee5$(_context5) {
+                                    while (1) {
+                                        switch (_context5.prev = _context5.next) {
+                                            case 0:
+                                                _context5.prev = 0;
+                                                _context5.next = 3;
+                                                return readFile('public/wp-config.php', { encoding: 'utf8' }).then(function () {
+                                                    var _ref6 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(data) {
+                                                        var salts, count;
+                                                        return regeneratorRuntime.wrap(function _callee4$(_context4) {
+                                                            while (1) {
+                                                                switch (_context4.prev = _context4.next) {
+                                                                    case 0:
+                                                                        _context4.next = 2;
+                                                                        return downloadSalts();
 
-                    case 6:
-                        salts = _context3.sent;
-                        _context3.next = 12;
-                        break;
+                                                                    case 2:
+                                                                        salts = _context4.sent;
 
-                    case 9:
-                        _context3.prev = 9;
-                        _context3.t0 = _context3['catch'](3);
-                        throw _context3.t0;
+                                                                        data = data.split('\r\n');
+                                                                        count = 0;
 
-                    case 12:
-                        _context3.prev = 12;
-                        _context3.next = 15;
-                        return readFile(wpConfig, { encoding: 'utf8' }).then(function (data) {
-                            data = data.split('\r\n');
-                            for (var count = 0; count < salts.length; ++count) {
-                                data[count + 38] = salts[count];
-                                if (count === salts.length) {
-                                    return data;
-                                }
-                            }
-                        });
+                                                                    case 5:
+                                                                        if (!(count < salts.length)) {
+                                                                            _context4.next = 14;
+                                                                            break;
+                                                                        }
 
-                    case 15:
-                        newConfig = _context3.sent;
-                        _context3.next = 21;
-                        break;
+                                                                        data[count + 38] = salts[count];
 
-                    case 18:
-                        _context3.prev = 18;
-                        _context3.t1 = _context3['catch'](12);
-                        throw _context3.t1;
+                                                                        if (!(count === salts.length - 1)) {
+                                                                            _context4.next = 11;
+                                                                            break;
+                                                                        }
 
-                    case 21:
-                        _context3.prev = 21;
-                        _context3.next = 24;
-                        return writeFile(wpConfig, newConfig);
+                                                                        _context4.next = 10;
+                                                                        return writeFile('public/wp-config.php', data.join('\r\n'));
 
-                    case 24:
-                        _context3.next = 29;
-                        break;
+                                                                    case 10:
+                                                                        resolve();
 
-                    case 26:
-                        _context3.prev = 26;
-                        _context3.t2 = _context3['catch'](21);
-                        throw _context3.t2;
+                                                                    case 11:
+                                                                        ++count;
+                                                                        _context4.next = 5;
+                                                                        break;
 
-                    case 29:
+                                                                    case 14:
+                                                                    case 'end':
+                                                                        return _context4.stop();
+                                                                }
+                                                            }
+                                                        }, _callee4, _this2);
+                                                    }));
+
+                                                    return function (_x5) {
+                                                        return _ref6.apply(this, arguments);
+                                                    };
+                                                }());
+
+                                            case 3:
+                                                _context5.next = 9;
+                                                break;
+
+                                            case 5:
+                                                _context5.prev = 5;
+                                                _context5.t0 = _context5['catch'](0);
+
+                                                reject(_context5.t0);
+                                                throw _context5.t0;
+
+                                            case 9:
+                                            case 'end':
+                                                return _context5.stop();
+                                        }
+                                    }
+                                }, _callee5, _this2, [[0, 5]]);
+                            }));
+
+                            return function (_x3, _x4) {
+                                return _ref5.apply(this, arguments);
+                            };
+                        }()));
+
+                    case 1:
                     case 'end':
-                        return _context3.stop();
+                        return _context6.stop();
                 }
             }
-        }, _callee3, this, [[3, 9], [12, 18], [21, 26]]);
+        }, _callee6, this);
     }));
 
-    function createSalts() {
-        return _ref3.apply(this, arguments);
+    function setupWpConfig() {
+        return _ref4.apply(this, arguments);
     }
 
-    return createSalts;
+    return setupWpConfig;
 }();
 
+var installPackages = function installPackages() {
+    return new Promise(function (resolve, reject) {
+        console.log('Now Installing composer and node packages.');
+        Promise.all([run('npm', ['install']), run('composer', ['install'])]).then(function () {
+            resolve();
+        }).catch(function (error) {
+            reject(error);
+        });
+    });
+};
+
 var removeThemeFromComposer = function () {
-    var _ref4 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4() {
+    var _ref7 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7() {
         var composerData;
-        return regeneratorRuntime.wrap(function _callee4$(_context4) {
+        return regeneratorRuntime.wrap(function _callee7$(_context7) {
             while (1) {
-                switch (_context4.prev = _context4.next) {
+                switch (_context7.prev = _context7.next) {
                     case 0:
                         composerData = null;
-                        _context4.prev = 1;
-                        _context4.next = 4;
+                        _context7.prev = 1;
+                        _context7.next = 4;
                         return readFile('composer.json', { encoding: 'utf8' }).then(function (data) {
                             data = JSON.parse(data);
-                            delete data.repositories[1];
+                            data.repositories = data.repositories.filter(function (repository, index) {
+                                return index !== 1;
+                            });
                             delete data.require['michaelmano/starter-theme'];
                             return data;
                         });
 
                     case 4:
-                        composerData = _context4.sent;
-                        _context4.next = 10;
+                        composerData = _context7.sent;
+                        _context7.next = 10;
                         break;
 
                     case 7:
-                        _context4.prev = 7;
-                        _context4.t0 = _context4['catch'](1);
-                        throw _context4.t0;
+                        _context7.prev = 7;
+                        _context7.t0 = _context7['catch'](1);
+                        throw _context7.t0;
 
                     case 10:
-                        _context4.prev = 10;
-                        _context4.next = 13;
+                        _context7.prev = 10;
+                        _context7.next = 13;
                         return writeFile('composer.json', JSON.stringify(composerData, null, 2));
 
                     case 13:
-                        _context4.next = 18;
+                        _context7.next = 18;
                         break;
 
                     case 15:
-                        _context4.prev = 15;
-                        _context4.t1 = _context4['catch'](10);
-                        throw _context4.t1;
+                        _context7.prev = 15;
+                        _context7.t1 = _context7['catch'](10);
+                        throw _context7.t1;
 
                     case 18:
                     case 'end':
-                        return _context4.stop();
+                        return _context7.stop();
                 }
             }
-        }, _callee4, this, [[1, 7], [10, 15]]);
+        }, _callee7, this, [[1, 7], [10, 15]]);
     }));
 
     function removeThemeFromComposer() {
-        return _ref4.apply(this, arguments);
+        return _ref7.apply(this, arguments);
     }
 
     return removeThemeFromComposer;
 }();
 
 var setupEnv = function () {
-    var _ref5 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6(env) {
-        var _this = this;
+    var _ref8 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9(env) {
+        var _this3 = this;
 
         var file, count, query;
-        return regeneratorRuntime.wrap(function _callee6$(_context6) {
+        return regeneratorRuntime.wrap(function _callee9$(_context9) {
             while (1) {
-                switch (_context6.prev = _context6.next) {
+                switch (_context9.prev = _context9.next) {
                     case 0:
                         file = '';
                         count = 0;
 
                         Object.keys(env).forEach(function () {
-                            var _ref6 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5(key, index) {
-                                return regeneratorRuntime.wrap(function _callee5$(_context5) {
+                            var _ref9 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8(key, index) {
+                                return regeneratorRuntime.wrap(function _callee8$(_context8) {
                                     while (1) {
-                                        switch (_context5.prev = _context5.next) {
+                                        switch (_context8.prev = _context8.next) {
                                             case 0:
                                                 count++;
                                                 file += key + '=' + env[key] + '\r\n';
 
                                                 if (!(count === Object.keys(env).length)) {
-                                                    _context5.next = 11;
+                                                    _context8.next = 11;
                                                     break;
                                                 }
 
-                                                _context5.prev = 3;
-                                                _context5.next = 6;
+                                                _context8.prev = 3;
+                                                _context8.next = 6;
                                                 return writeFile('.env', file);
 
                                             case 6:
-                                                _context5.next = 11;
+                                                _context8.next = 11;
                                                 break;
 
                                             case 8:
-                                                _context5.prev = 8;
-                                                _context5.t0 = _context5['catch'](3);
-                                                throw _context5.t0;
+                                                _context8.prev = 8;
+                                                _context8.t0 = _context8['catch'](3);
+                                                throw _context8.t0;
 
                                             case 11:
                                             case 'end':
-                                                return _context5.stop();
+                                                return _context8.stop();
                                         }
                                     }
-                                }, _callee5, _this, [[3, 8]]);
+                                }, _callee8, _this3, [[3, 8]]);
                             }));
 
-                            return function (_x2, _x3) {
-                                return _ref6.apply(this, arguments);
+                            return function (_x7, _x8) {
+                                return _ref9.apply(this, arguments);
                             };
                         }());
 
@@ -624,63 +706,63 @@ var setupEnv = function () {
                         }
 
                         if (!(env.WP_DEFAULT_THEME !== 'starter-theme')) {
-                            _context6.next = 13;
+                            _context9.next = 13;
                             break;
                         }
 
-                        _context6.prev = 5;
+                        _context9.prev = 5;
 
                         renameFile('public/wp-content/themes/starter-theme', 'public/wp-content/themes/' + env.WP_DEFAULT_THEME);
-                        _context6.next = 12;
+                        _context9.next = 12;
                         break;
 
                     case 9:
-                        _context6.prev = 9;
-                        _context6.t0 = _context6['catch'](5);
-                        throw _context6.t0;
+                        _context9.prev = 9;
+                        _context9.t0 = _context9['catch'](5);
+                        throw _context9.t0;
 
                     case 12:
                         ;
 
                     case 13:
-                        _context6.prev = 13;
-                        _context6.next = 16;
+                        _context9.prev = 13;
+                        _context9.next = 16;
                         return writeFile('style.scss', '/*!\r\n * Theme Name: ' + env.WP_DEFAULT_THEME + '\r\n*/\r\n');
 
                     case 16:
-                        _context6.next = 21;
+                        _context9.next = 21;
                         break;
 
                     case 18:
-                        _context6.prev = 18;
-                        _context6.t1 = _context6['catch'](13);
-                        throw _context6.t1;
+                        _context9.prev = 18;
+                        _context9.t1 = _context9['catch'](13);
+                        throw _context9.t1;
 
                     case 21:
                     case 'end':
-                        return _context6.stop();
+                        return _context9.stop();
                 }
             }
-        }, _callee6, this, [[5, 9], [13, 18]]);
+        }, _callee9, this, [[5, 9], [13, 18]]);
     }));
 
-    function setupEnv(_x) {
-        return _ref5.apply(this, arguments);
+    function setupEnv(_x6) {
+        return _ref8.apply(this, arguments);
     }
 
     return setupEnv;
 }();
 
 var valetExists = function () {
-    var _ref7 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7(directory) {
+    var _ref10 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee10(directory) {
         var config;
-        return regeneratorRuntime.wrap(function _callee7$(_context7) {
+        return regeneratorRuntime.wrap(function _callee10$(_context10) {
             while (1) {
-                switch (_context7.prev = _context7.next) {
+                switch (_context10.prev = _context10.next) {
                     case 0:
                         config = process.env.HOME + '/.valet/config.json';
-                        _context7.prev = 1;
-                        _context7.next = 4;
+                        _context10.prev = 1;
+                        _context10.next = 4;
                         return readFile(config).then(function (data) {
                             return JSON.parse(data).paths.every(function (path) {
                                 return directory.indexOf(path) > -1;
@@ -688,26 +770,26 @@ var valetExists = function () {
                         });
 
                     case 4:
-                        return _context7.abrupt('return', _context7.sent);
+                        return _context10.abrupt('return', _context10.sent);
 
                     case 7:
-                        _context7.prev = 7;
-                        _context7.t0 = _context7['catch'](1);
-                        return _context7.abrupt('return', null);
+                        _context10.prev = 7;
+                        _context10.t0 = _context10['catch'](1);
+                        return _context10.abrupt('return', null);
 
                     case 10:
-                        return _context7.abrupt('return', false);
+                        return _context10.abrupt('return', false);
 
                     case 11:
                     case 'end':
-                        return _context7.stop();
+                        return _context10.stop();
                 }
             }
-        }, _callee7, this, [[1, 7]]);
+        }, _callee10, this, [[1, 7]]);
     }));
 
-    function valetExists(_x4) {
-        return _ref7.apply(this, arguments);
+    function valetExists(_x9) {
+        return _ref10.apply(this, arguments);
     }
 
     return valetExists;
