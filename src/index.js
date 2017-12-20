@@ -13,11 +13,6 @@ import {
 const init = async function init() {
     await checkRequirements(['git', 'composer', 'php', 'npm']);
     const config = await setup();
-    console.log(
-        '\r\n\r\n',
-        '* Now installing required node packages',
-        `and composer vendors.`,
-    );
     const valet = await valetExists(config.directory);
     await cloneProject(config.directory);
     try {
@@ -28,24 +23,29 @@ const init = async function init() {
     if (config.theme !== 'yes') {
         await removeThemeFromComposer();
     }
-    createSalts();
-    await run('npm', ['install']);
-    await run('composer', ['install']);
+    await setupWpConfig();
+    await installPackages();
     setupEnv(config.env);
     if (config.theme) {
         await removeThemeFromComposer();
     }
-    await run('rm', ['-rf', '.git']);
-    await run('git', ['init', '../']);
+    await run('rm', ['-rf', '.git', 'composer.lock', 'package-lock.json']);
+    await run('git', ['init', '.']);
+    await run('git', ['add', '.']);
+    await run('git', ['commit', '-m "Initial Commit."']);
     if (valet !== null || valet !== true) {
-        console.log('Now running valet link and secure.');
+        console.log('Now running valet link.');
         try {
             await process.chdir('public');
         } catch (error) {
             throw (error);
         }
-        await run('valet', ['link', config.directory]);
-        await run('valet', ['secure']);
+        await run('valet', [
+            'link',
+            config.env.WP_HOME
+                .replace(/(^\w+:|^)\/\//, '')
+                .replace(/[^.]+$/g, '').slice(0, -1),
+        ]);
     }
     console.log(
         'CD into the project',
@@ -65,7 +65,7 @@ const checkRequirements = function checkRequirements(requirements) {
 
 const setup = async function setup() {
     const directory = process.argv.slice(2)[0]
-        ? process.argv.slice(2)[0]
+        ? process.argv.slice(2)[0].match(/([^\/]*)\/*$/)[1]
         : await ask({
             question: 'Please enter project path: ',
             completer: directoryTree,
@@ -79,7 +79,7 @@ const setup = async function setup() {
     const env = {
         WP_HOME: await ask({
             question: 'Please enter the site URL: ',
-            default: `https://${directory}.dev`,
+            default: `http://${directory}.test`,
         }),
         WP_DEFAULT_THEME: await ask({
             question: 'What would you like to name your theme?: ',
@@ -142,40 +142,54 @@ const cloneProject = function cloneProject(directory) {
     ]);
 };
 
-const createSalts = async function createSalts() {
-    const wpConfig = 'public/wp-config.php';
-    let salts = null;
-    let newConfig = null;
+const downloadSalts = function downloadSalts() {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await download('https://api.wordpress.org/secret-key/1.1/salt/')
+                .then((data) => {
+                    return resolve(data.toString().split('\n'));
+                });
+        } catch (error) {
+            reject(error);
+            throw error;
+        }
+    });
+};
 
-    try {
-        salts = await download('https://api.wordpress.org/secret-key/1.1/salt/').then((data) => {
-            return data.toString().split('\n');
-        }).catch((error) => {
-            throw (error);
-        });
-    } catch (error) {
-        throw (error);
-    }
-
-    try {
-        newConfig = await readFile(wpConfig, {encoding: 'utf8'})
-        .then((data) => {
-            data = data.split('\r\n');
-            for (let count = 0; count < salts.length; ++count) {
-                data[count + 38] = salts[count];
-                if (count === salts.length) {
-                    return data;
+const setupWpConfig = async function setupWpConfig() {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await readFile('public/wp-config.php', {encoding: 'utf8'})
+            .then(async (data) => {
+                let salts = await downloadSalts();
+                data = data.split('\r\n');
+                for (let count = 0; count < salts.length; ++count) {
+                    data[count+38] = salts[count];
+                    if (count === salts.length-1) {
+                        await writeFile('public/wp-config.php', data.join('\r\n'));
+                        resolve();
+                    }
                 }
-            }
+            });
+        } catch (error) {
+            reject(error);
+            throw error;
+        }
+    });
+};
+
+const installPackages = function installPackages() {
+    return new Promise((resolve, reject) => {
+        console.log('Now Installing composer and node packages.');
+        Promise.all([
+            run('npm', ['install']),
+            run('composer', ['install']),
+        ]).then(() => {
+            resolve();
+        }).catch((error) => {
+            reject(error);
         });
-    } catch (error) {
-        throw (error);
-    }
-    try {
-        await writeFile(wpConfig, newConfig);
-    } catch (error) {
-        throw (error);
-    }
+    });
 };
 
 const removeThemeFromComposer = async function removeThemeFromComposer() {
@@ -184,7 +198,10 @@ const removeThemeFromComposer = async function removeThemeFromComposer() {
         composerData = await readFile('composer.json', {encoding: 'utf8'})
         .then((data) => {
             data = JSON.parse(data);
-            delete data.repositories[1];
+            data.repositories = data.repositories.filter(
+                (repository, index) => {
+                    return index !== 1;
+                });
             delete data.require['michaelmano/starter-theme'];
             return data;
         });
