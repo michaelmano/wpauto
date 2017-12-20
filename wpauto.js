@@ -140,9 +140,7 @@ const init = async function init() {
         }
         await run('valet', [
             'link',
-            config.env.WP_HOME
-                .replace(/(^\w+:|^)\/\//, '')
-                .replace(/[^.]+$/g, '').slice(0, -1),
+            config.foldername,
         ]);
     }
     console.log(
@@ -163,11 +161,13 @@ const checkRequirements = function checkRequirements(requirements) {
 
 const setup = async function setup() {
     const directory = process.argv.slice(2)[0]
-        ? process.argv.slice(2)[0].match(/([^\/]*)\/*$/)[1]
+        ? process.argv.slice(2)[0]
         : await ask({
             question: 'Please enter project path: ',
             completer: directoryTree,
         });
+
+    const foldername = directory.match(/([^\/]*)\/*$/)[1];
 
     const theme = await ask({
         question: 'Would you like to install the starter theme?',
@@ -177,15 +177,15 @@ const setup = async function setup() {
     const env = {
         WP_HOME: await ask({
             question: 'Please enter the site URL: ',
-            default: `http://${directory}.test`,
+            default: `http://${foldername}.test`,
         }),
         WP_DEFAULT_THEME: await ask({
             question: 'What would you like to name your theme?: ',
-            default: directory,
+            default: foldername,
         }),
         DB_NAME: await ask({
             question: 'Database name: ',
-            default: directory.replace(new RegExp('-', 'g'), '_'),
+            default: foldername.replace(new RegExp('-', 'g'), '_'),
         }),
         DB_USER: await ask({
             question: 'Database user: ',
@@ -223,6 +223,7 @@ const setup = async function setup() {
 
     const config = {
         directory,
+        foldername,
         theme,
         env,
     };
